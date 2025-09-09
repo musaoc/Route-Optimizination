@@ -1,5 +1,17 @@
 # Vehicle Route Optimization Project Context
 
+What we are trying to do?
+
+We are trying to optmize delivery of products from surving warehouse to KDs. 
+
+How arer we trying to optimize the delivery?
+
+We are creating vehicle route optimization system using OR tools and OSRM routing engine.
+
+In which, we will recommend and visualize the path to take and the vehicle to take, while reducing the cost to the minimum.
+
+
+
 ## Project Overview
 This is a **Vehicle Routing Problem (VRP)** solution for a fertilizer delivery company operating in Lahore, Pakistan. The system optimizes delivery routes to minimize total transportation costs while respecting vehicle capacity constraints and mixed fleet ownership models.
 
