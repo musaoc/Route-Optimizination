@@ -1,0 +1,114 @@
+# Vehicle Route Optimization Project Context
+
+## Project Overview
+This is a **Vehicle Routing Problem (VRP)** solution for a fertilizer delivery company operating in Lahore, Pakistan. The system optimizes delivery routes to minimize total transportation costs while respecting vehicle capacity constraints and mixed fleet ownership models.
+
+## Business Problem
+- **Company**: Fertilizer distributor with a central warehouse
+- **Challenge**: Efficiently deliver fertilizer bags to multiple customer shops
+- **Goal**: Minimize total delivery costs while ensuring all customer demands are met
+
+## Technical Approach
+
+### Libraries & Technologies Used
+- **OR-Tools**: Google's optimization library for solving the Vehicle Routing Problem
+- **OSRM (Open Source Routing Machine)**: Real-world driving distance and route calculation
+- **Folium**: Interactive map visualization
+- **NumPy**: Numerical computations and matrix operations
+- **Requests**: HTTP API calls to OSRM routing service
+
+### Key Features
+
+#### 1. **Real-World Routing**
+- Uses OSRM API to get actual driving distances and routes (not straight-line distances)
+- Compares Haversine distance calculations vs real road distances
+- Generates detailed turn-by-turn route paths for visualization
+
+#### 2. **Mixed Vehicle Fleet**
+The system handles both **owned** and **rented** vehicles with different cost structures:
+
+**Owned Vehicles:**
+- Simple cost model: `distance × cost_per_km`
+- Examples: Company truck (₨100/km), company van (₨70/km)
+
+**Rented Vehicles:**
+- Complex cost model: Fixed rental fee up to distance limit, then variable cost
+- Example: ₨5000 for first 100km, then ₨60/km for additional distance
+- Formula: `fixed_rent + max(0, (distance - limit) × cost_per_km)`
+
+#### 3. **Demand Filtering**
+- Automatically filters out locations with zero demand
+- Keeps warehouse as depot regardless of demand
+- Reduces computational complexity by excluding unnecessary stops
+
+#### 4. **Capacity Constraints**
+- Each vehicle has maximum carrying capacity (fertilizer bags)
+- Optimizer ensures no vehicle exceeds its capacity
+- Tracks load percentage for efficiency analysis
+
+## Data Structure
+
+### Locations
+- **Warehouse**: Single depot where all routes start/end
+- **Customer Shops**: Multiple delivery points with specific demands
+- **Format**: `(name, latitude, longitude)`
+- **Demands**: Array of fertilizer bags needed at each location
+
+### Vehicle Fleet
+Each vehicle defined with:
+- `capacity`: Maximum bags it can carry
+- `cost_per_km`: Operating cost per kilometer
+- `rent_limit_km`: Distance limit for rentals (0 for owned)
+- `fixed_rent`: Fixed rental cost (0 for owned)
+- `count`: Number of vehicles of this type available
+
+## Optimization Process
+
+1. **Distance Matrix Calculation**: Get real driving distances between all location pairs using OSRM
+2. **Cost Evaluation**: Create custom cost functions for each vehicle type (owned vs rented)
+3. **VRP Solving**: Use OR-Tools to find optimal route assignments
+4. **Route Extraction**: Get detailed driving paths for each optimized route
+5. **Visualization**: Generate interactive map with real driving routes
+
+## Output & Analysis
+
+### Route Information
+- Vehicle assignments with load utilization
+- Detailed cost breakdowns (rental vs distance costs)
+- Turn-by-turn driving directions
+- Performance metrics (cost per bag, total distance)
+
+### Cost Analysis
+- Comparison between owned vs rented vehicle usage
+- Rental cost breakdown (fixed + variable portions)
+- Efficiency metrics and capacity utilization
+
+### Visual Output
+- Interactive HTML map with real driving routes
+- Color-coded routes for different vehicles
+- Popup information for each route segment
+- Summary statistics overlay
+
+## Business Value
+- **Cost Optimization**: Minimizes total delivery expenses
+- **Fleet Management**: Optimal mix of owned vs rented vehicles
+- **Route Efficiency**: Real-world driving distances for accurate planning
+- **Scalability**: Easily add/remove locations and vehicles
+- **Visual Planning**: Clear route visualization for dispatch teams
+
+This system transforms a complex logistics problem into an automated optimization solution that considers real-world constraints and provides actionable delivery routes with accurate cost projections.
+
+
+
+
+Rental logic:
+
+
+First calculate the distance/km for rental for within km limit: assume 80 km limit/ 2000, means 40rupees/km
+Then calculate the distance/km for rental for beyond km limit: means 40rupees/km + 60/km for every km beyond 80km
+Then add the two together to get the total cost for rental vehicle.
+
+
+Now, assume what we need is 40km drive, we can use rental vehicle for 2000/50 = 40km, instad of owned vehicle which is costing 50ruppees/km. 
+
+OR lets remove the excess logic, if it is hard. and just keep rental for a certain limit, rental can only drive upto x kms. therefore. it will just be 40ruppes/km, and simple comparison
